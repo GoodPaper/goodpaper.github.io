@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://goodpaper.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://goodpaper.github.io/theme/pygments/monokai.min.css">
+  <link rel="stylesheet" type="text/css" href="https://goodpaper.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+
+
+    <link rel="shortcut icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+
+<meta name="author" content="good-paper" />
+<meta name="description" content="How rename multiple files in linux(CentOS) system?" />
+<meta name="keywords" content="shell">
+
+<meta property="og:site_name" content="knowidea"/>
+<meta property="og:title" content="CentOS 7 - Rename file"/>
+<meta property="og:description" content="How rename multiple files in linux(CentOS) system?"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://goodpaper.github.io/centos7-rename-file.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-10-10 19:40:00+09:00"/>
+<meta property="article:modified_time" content="2017-10-10 19:40:00+09:00"/>
+<meta property="article:author" content="https://goodpaper.github.io/author/good-paper.html">
+<meta property="article:section" content="shell"/>
+<meta property="article:tag" content="shell"/>
+<meta property="og:image" content="https://goodpaper.github.io/theme/img/profile.png">
+
+  <title>knowidea &ndash; CentOS 7 - Rename file</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://goodpaper.github.io">
+        <img src="https://goodpaper.github.io/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href="https://goodpaper.github.io"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+
+          <li><a href="" target="_blank">Man of my word.</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/hozikim/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/GoodPaper" target="_blank"><i class="fa fa-github"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://goodpaper.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="centos7-rename-file">CentOS 7 - Rename file</h1>
+    <p>
+          Posted on 화 10 10월 2017 in <a href="https://goodpaper.github.io/category/shell.html">shell</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <h2>Circumstance</h2>
+<p>On developing SW module, I had to rename multiple files to handle requirements. Only files I had consisted with old file name conventions. So, I need to rename files in linux system. </p>
+<h2>Personal condition</h2>
+<p>I had a few knowledge about linux shell commands...</p>
+<h2>What access to solution</h2>
+<ol>
+<li>I thought to write shell script.</li>
+<li>Search keyword 'rename multiple filename' at google.</li>
+<li>I got this link. <a href="https://stackoverflow.com/questions/16541582/finding-multiple-files-recursively-and-renaming-in-linux">https://stackoverflow.com/questions/16541582/finding-multiple-files-recursively-and-renaming-in-linux</a></li>
+<li>I follow the solution of kamituel. <a href="https://stackoverflow.com/users/782609/kamituel">https://stackoverflow.com/users/782609/kamituel</a></li>
+</ol>
+<h2>How I did</h2>
+<div class="highlight"><pre><span></span>$ find . -type f -name <span class="s1">&#39;*targetExpression*&#39;</span> -exec rename targetExpression newExpression <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>.: Current directory and childrens</li>
+<li>-type f: I will find node type as file.</li>
+<li>-name expression: Files with specific expression what I want to find.</li>
+<li>-exec: Execute command to result of find command.</li>
+<li>rename: Shell command to rename file.</li>
+<li>'{}': matched result files of find command. It uses arguments for rename command.</li>
+<li>\;: Means end of the exec expression. </li>
+</ul>
+</blockquote>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://goodpaper.github.io/tag/shell.html">shell</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'https-goodpaper-github-io';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " knowidea ",
+  "url" : "https://goodpaper.github.io",
+  "image": "https://goodpaper.github.io/theme/img/profile.png",
+  "description": ""
+}
+</script>
+
+</body>
+</html>
