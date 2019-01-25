@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - shell</title><link href="/" rel="alternate"></link><link href="/feeds/shell.atom.xml" rel="self"></link><id>/</id><updated>2017-10-10T19:40:00+09:00</updated><entry><title>CentOS 7 - Rename file</title><link href="/centos7-rename-file.html" rel="alternate"></link><published>2017-10-10T19:40:00+09:00</published><updated>2017-10-10T19:40:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2017-10-10:/centos7-rename-file.html</id><summary type="html">&lt;p&gt;How rename multiple files in linux(CentOS) system?&lt;/p&gt;</summary><content type="html">&lt;h2&gt;Circumstance&lt;/h2&gt;
+&lt;p&gt;On developing SW module, I had to rename multiple files to handle requirements. Only files I had consisted with old file name conventions. So, I need to rename files in linux system. &lt;/p&gt;
+&lt;h2&gt;Personal condition&lt;/h2&gt;
+&lt;p&gt;I had a few knowledge about linux shell commands...&lt;/p&gt;
+&lt;h2&gt;What access to solution&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;I thought to write shell script.&lt;/li&gt;
+&lt;li&gt;Search keyword 'rename multiple filename' at google.&lt;/li&gt;
+&lt;li&gt;I got this link. &lt;a href="https://stackoverflow.com/questions/16541582/finding-multiple-files-recursively-and-renaming-in-linux"&gt;https://stackoverflow.com/questions/16541582/finding-multiple-files-recursively-and-renaming-in-linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;I follow the solution of kamituel. &lt;a href="https://stackoverflow.com/users/782609/kamituel"&gt;https://stackoverflow.com/users/782609/kamituel&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;How I did&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ find . -type f -name &lt;span class="s1"&gt;&amp;#39;*targetExpression*&amp;#39;&lt;/span&gt; -exec rename targetExpression newExpression &lt;span class="s1"&gt;&amp;#39;{}&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;.: Current directory and childrens&lt;/li&gt;
+&lt;li&gt;-type f: I will find node type as file.&lt;/li&gt;
+&lt;li&gt;-name expression: Files with specific expression what I want to find.&lt;/li&gt;
+&lt;li&gt;-exec: Execute command to result of find command.&lt;/li&gt;
+&lt;li&gt;rename: Shell command to rename file.&lt;/li&gt;
+&lt;li&gt;'{}': matched result files of find command. It uses arguments for rename command.&lt;/li&gt;
+&lt;li&gt;\;: Means end of the exec expression. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;</content><category term="shell"></category></entry></feed>

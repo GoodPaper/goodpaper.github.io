@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - Blog</title><link href="/" rel="alternate"></link><link href="/feeds/blog.atom.xml" rel="self"></link><id>/</id><updated>2017-10-06T07:30:00+09:00</updated><entry><title>The very first article.</title><link href="/the-very-first-article.html" rel="alternate"></link><published>2017-10-06T07:30:00+09:00</published><updated>2017-10-06T07:30:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2017-10-06:/the-very-first-article.html</id><summary type="html">&lt;p&gt;About this blog...&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is the very first article of this blog. I will keep upload information about SW Engineering. &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The person who write contents in this blog is not only a non-native english speaker but also writing contents as english. Please understand to irregular syntax.&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="pelican"></category></entry></feed>
