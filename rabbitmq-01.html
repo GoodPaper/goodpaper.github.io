@@ -112,8 +112,77 @@
 <h2>Introduction</h2>
 <p>RabbitMQ는 메시지 브로커이다. 우체국으로 생각하면 편함.
  - 우체통에 편지를 넣으면, 우체부가 수신처에 편지를 갖다줄 것이라는 확신을 할 수 있지 않은가??
-여기서 우체국, 우체통, 우체부를 RabbitMQ라 할 수 있다. (있단다...)
-<img alt="what" src="/images/rmq_01_producer.png"></p>
+여기서 우체국, 우체통, 우체부를 RabbitMQ라 할 수 있다. (있단다...)</p>
+<p><img alt="producer" src="/images/rmq_01/rmq_01_producer.png"></p>
+<p>Producing은 메시지를 전달하는 것을 의미한다.</p>
+<p><img alt="queue" src="/images/rmq_01/rmq_01_queue.png"></p>
+<p>Queue는 RabbitMQ 안에 들어있는 우체통과 같은 것이다. 이 큐는 RabbitMQ Server가 존재하는 Host의 리소스를 잡아먹기 때문에, Host 서버만 성능이 좋으면 된다. 송수신부의 Application들은 이 Queue에 대한 성능에 신경쓸 필요가 없다.
+1개 Queue에 여러 발송자가 메시지를 던질 수 있고, 1개 Queue에 여러 수신자가 메시지를 받아갈 수도 있다.</p>
+<p><img alt="consumer" src="/images/rmq_01/rmq_01_consumer.png"></p>
+<p>Consuming은 메시지를 수신하는 것을 의미한다. (그 메세지에 대한 처리는 알아서들 하겠지...)</p>
+<h2>Hello World!</h2>
+<p>여기서는 Python을 예로 사용한다. RabbitMQ를 활용하기 위한 Python의 package는 pika이다.
+Tutorial로 Producer / Consumer를 각각 만들어서 테스트 해 볼 것임. 이를 도식화하면 아래와 같음.</p>
+<p><img alt="overall" src="/images/rmq_01/rmq_01_overall.png"></p>
+<h4>1. Sending</h4>
+<p><img alt="sending" src="/images/rmq_01/rmq_01_sending.png"></p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="c1"># connection 설정득 &amp; channel 획득</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span> <span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span> <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span> <span class="p">)</span> <span class="p">)</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+
+<span class="c1"># Queue 선언</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span> <span class="n">queue</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span> <span class="p">)</span>
+<span class="c1"># 데이터 전송.</span>
+<span class="c1"># RabbitMQ에서 메시지는 Queue로 바로 보낼 수 없고, Exchange를 거쳐서만 갈 수 있다. 자세한건 다음에 나오니, 우선 그렇다는 것만 알고 넘어감...</span>
+<span class="c1"># Exchange를 공백으로 놓으면, 사용자가 지정한 Queue로 메시지를 바로 보낼수 있다. 이를 위해서 Routine key로 Queue 이름을 집어 넣는다.</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span> <span class="n">exchange</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">routing_key</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="s1">&#39;Hello World!&#39;</span> <span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot; [x] Sent &#39;Hello World!&#39;&quot;</span><span class="p">)</span>
+
+<span class="c1"># 다 했으면, Connection 종</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h4>2. Receiving</h4>
+<p><img alt="sending" src="/images/rmq_01/rmq_01_receiving.png"></p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="c1"># connection 설정 및 channel 획득</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span> <span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span> <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span> <span class="p">)</span> <span class="p">)</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+
+<span class="c1"># Queue 선언( 위에서 선언했는데도 또 선언해도 되는가...? Queue 선언은 Idempotent 성격이 적용되기 때문에, 없으면 만들고, 있으면 그대로 있는 것을 씀.)료</span>
+<span class="c1"># 생각해보면... 실제 환경에서는 Server / Client가 같은 서버에 있는 것도 아니고, 같은 코드를 공유하지 않을 수도 있으니... 이렇게 하면 더 편할듯.</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot; [x] Received </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">body</span><span class="p">)</span>
+
+<span class="c1"># 위에 정의한 함수를 callback으로 등록하고, 메시지가 오면, 위 함수가 실행됨.</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span> <span class="n">callback</span><span class="p">,</span> <span class="n">queue</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="n">no_ack</span> <span class="o">=</span> <span class="bp">True</span> <span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span><span class="p">)</span>
+
+<span class="c1"># 무한대 루프를 돌면서 메시지 수신을 처리한다. (나중에 종료하고 싶으면 Ctrl+c로 종료하면 된다.)</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">start_consuming</span><span class="p">()</span>
+</pre></div>
+
+
+<h4>3. Result</h4>
+<div class="highlight"><pre><span></span><span class="c1">##################### send.py</span>
+ <span class="o">[</span>*<span class="o">]</span> Waiting <span class="k">for</span> messages. To <span class="nb">exit</span> press CTRL+C
+ <span class="o">[</span>x<span class="o">]</span> Received b<span class="s1">&#39;Hello World!&#39;</span>
+<span class="c1">#####################</span>
+
+<span class="c1">##################### receive.py</span>
+ <span class="o">[</span>x<span class="o">]</span> Sent <span class="s1">&#39;Hello World!&#39;</span>
+<span class="c1">#####################</span>
+</pre></div>
+
+
+<h2>Next...</h2>
+<p>다음 절에서는 Queue에 Naming을 한 다음 사용하는 것을 배운다.</p>
 <h2>Reference</h2>
 <ol>
 <li>https://www.rabbitmq.com/tutorials/tutorial-one-python.html</li>
