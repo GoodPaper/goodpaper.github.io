@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - middleware</title><link href="/" rel="alternate"></link><link href="/feeds/middleware.atom.xml" rel="self"></link><id>/</id><updated>2019-01-25T11:30:00+09:00</updated><entry><title>RabbitMQ - #01</title><link href="/rabbitmq-01.html" rel="alternate"></link><published>2019-01-25T11:30:00+09:00</published><updated>2019-01-25T11:30:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-25:/rabbitmq-01.html</id><summary type="html">&lt;p&gt;RabbitMQ Study #01 -&lt;/p&gt;</summary><content type="html">&lt;h2&gt;Prologue&lt;/h2&gt;
+&lt;p&gt;본 문서는 RabbitMQ 홈페이지에 나와 있는 튜토리얼 문서를 공부하는 차원에서 필요한 부분만 해석해서 요약한 문서입니다. 이 점 참고해주세요.&lt;/p&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;RabbitMQ는 메시지 브로커이다. 우체국으로 생각하면 편함.
+ - 우체통에 편지를 넣으면, 우체부가 수신처에 편지를 갖다줄 것이라는 확신을 할 수 있지 않은가??
+여기서 우체국, 우체통, 우체부를 RabbitMQ라 할 수 있다. (있단다...)&lt;/p&gt;
+&lt;h2&gt;Reference&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;https://www.rabbitmq.com/tutorials/tutorial-one-python.html&lt;/li&gt;
+&lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry></feed>
