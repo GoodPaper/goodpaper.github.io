@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - network</title><link href="/" rel="alternate"></link><link href="/feeds/network.atom.xml" rel="self"></link><id>/</id><updated>2019-01-08T11:30:00+09:00</updated><entry><title>NAT 이란?</title><link href="/about-nat.html" rel="alternate"></link><published>2019-01-08T11:30:00+09:00</published><updated>2019-01-08T11:30:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-08:/about-nat.html</id><summary type="html">&lt;p&gt;What is NAT&lt;/p&gt;</summary><content type="html">&lt;h2&gt;왜 알아보게 되었나...&lt;/h2&gt;
+&lt;p&gt;AWS로 개발을 하고 있다. 여러 서비스 중 VPC를 사용하고 있는데, 이 VPC 안에는 Public IP로 접근 가능한 Instance, Private IP로 접근 가능한 Instance들로 구성이 되어 있다. Public IP(Elastic IP)가 할당된 Instance들은 바로 SSH로 접속할 수 있지만, Private IP가 할당된 Instance는 일종의 매개체를 통해서 접속해야 한다. 그래서 공유기의 Port forwarding과 같은 역할을 하는 NAT용 Instance를 만들어야 하는데, NAT에 대한 정확한 정의를 확인하고자 하여 이 글을 작성하게 되었다.&lt;/p&gt;
+&lt;h2&gt;사전적 정의&lt;/h2&gt;
+&lt;p&gt;NAT: Network Address Translation. 네트워크 주소 변환.
+IP Packet의 포트 번호, 발송지와 목적지의 IP 주소를 재기록하여 라우터를 통해 네트워크 트래픽을 주고 받는 기술.&lt;/p&gt;
+&lt;h2&gt;왜 NAT을 사용함?&lt;/h2&gt;
+&lt;p&gt;사설 네트워크에 있는 여러 Host가 하나의 공인 IP를 이용하여 인터넷에 접속하기 위함. 이를 사용함으로써, 
+1. 인터넷 공인 IP 주소를 절약할 수 있고,
+2. 사설망에 있는 장비를 외부의 침입자로부터 보호할 수 있음.&lt;/p&gt;
+&lt;h2&gt;Reference&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;http://jwprogramming.tistory.com/30&lt;/li&gt;
+&lt;li&gt;http://darksoulstory.tistory.com/72&lt;/li&gt;
+&lt;li&gt;https://kb.netgear.com/992/What-is-NAT-Network-Address-Translation&lt;/li&gt;
+&lt;/ol&gt;</content><category term="network"></category></entry></feed>
