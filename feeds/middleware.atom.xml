@@ -16,13 +16,18 @@
 &lt;p&gt;RabbitMQ는 메시지 브로커이다. 우체국으로 생각하면 편함.
  - 우체통에 편지를 넣으면, 우체부가 수신처에 편지를 갖다줄 것이라는 확신을 할 수 있지 않은가??
 여기서 우체국, 우체통, 우체부를 RabbitMQ라 할 수 있다. (있단다...)&lt;/p&gt;
-&lt;p&gt;&lt;img alt="producer" src="/images/rmq_01/rmq_01_producer.png"&gt;
-&lt;em&gt;PRODUCER&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="producer" src="/images/rmq_01/rmq_01_producer.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;Producing은 메시지를 전달하는 것을 의미한다.&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="queue" src="/images/rmq_01/rmq_01_queue.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;Queue는 RabbitMQ 안에 들어있는 우체통과 같은 것이다. 이 큐는 RabbitMQ Server가 존재하는 Host의 리소스를 잡아먹기 때문에, Host 서버만 성능이 좋으면 된다. 송수신부의 Application들은 이 Queue에 대한 성능에 신경쓸 필요가 없다.
 1개 Queue에 여러 발송자가 메시지를 던질 수 있고, 1개 Queue에 여러 수신자가 메시지를 받아갈 수도 있다.&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="consumer" src="/images/rmq_01/rmq_01_consumer.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;Consuming은 메시지를 수신하는 것을 의미한다. (그 메세지에 대한 처리는 알아서들 하겠지...)
 &lt;br/&gt;
 &lt;br/&gt;&lt;/p&gt;
