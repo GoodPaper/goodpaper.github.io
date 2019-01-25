@@ -83,7 +83,9 @@ Tutorial로 Producer / Consumer를 각각 만들어서 테스트 해 볼 것임.
 
 
 &lt;h2&gt;Next...&lt;/h2&gt;
-&lt;p&gt;다음 절에서는 Queue에 Naming을 한 다음 사용하는 것을 배운다.&lt;/p&gt;
+&lt;p&gt;다음 절에서는 Queue에 Naming을 한 다음 사용하는 것을 배운다.
+&lt;/br&gt;
+&lt;/br&gt;&lt;/p&gt;
 &lt;h2&gt;Reference&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;https://www.rabbitmq.com/tutorials/tutorial-one-python.html&lt;/li&gt;
