@@ -11,12 +11,14 @@ Upstream exchange는 본 작업을 위해서 재설정을 하지 않아도 되�
 &lt;img alt="RabbitMQ Federation" src="/images/rmq_federation/rmq_federation_00.png"&gt;
 &lt;br/&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;h3&gt;1. Are all messages copied?&lt;/h3&gt;
-&lt;p&gt;원하는 메시지만 복사할 수 있다. 이 설정은 federation plugin을 통해서 설정할 수 있는데, 그 방법은 아래에 나온다.&lt;/p&gt;
+&lt;p&gt;원하는 메시지만 복사할 수도 있다. 이 설정은 federation plugin을 통해서 설정할 수 있는데, 그 방법은 아래에 나온다.&lt;/p&gt;
 &lt;h3&gt;2. How does a federated exchange link to its upstream exchanges?&lt;/h3&gt;
 &lt;p&gt;Federated exchange를 설정하면, 각 Upstream exchange들의 목록이 Connection properties와 함께 보여진다.&lt;/p&gt;
 &lt;h3&gt;3. Can I federate a federated exchange?&lt;/h3&gt;
-&lt;p&gt;Federated exchange를 upstream exchange로 사용하는 것을 막을 방법은 없다...
- - Loop Case: A, B Exchange가 서로를 upstream exchange라고 설정하면, 이게 Loop가 되는 것임...&lt;/p&gt;
+&lt;p&gt;Federated exchange를 upstream exchange로 사용하는 것을 막을 방법은 없다...&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Loop Case: A, B Exchange가 서로를 upstream exchange라고 설정하면, 이게 Loop가 되는 것임...&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;여러 개의 Exchange로 형성된 Infinite Loop이 있을 수 있는데... 이 때 메시지가 계속 re-route되는 것을 막고 싶다면, 메시지가 복사되는 최대 회수를 제한하면 된다. max-hop 참고.&lt;/p&gt;
 &lt;h3&gt;4. Can I federate any exchange?&lt;/h3&gt;
 &lt;p&gt;거의 다 된다고 보면된다. 단, Default exchange( '' )를 federate 할 수는 없다. ( 이건, Queue에 직접 접근할 때 사용하는 것이기 때문... )&lt;br/&gt;
