@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="/theme/pygments/monokai.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/fontawesome.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/brands.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/solid.css">
+
+
+    <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="knowidea Atom">
+
+
+    <link rel="shortcut icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+
+
+
+<meta name="author" content="good-paper" />
+<meta name="description" content="RabbitMQ Study - Federated queue" />
+<meta name="keywords" content="amqp, rabbitmq">
+
+<meta property="og:site_name" content="knowidea"/>
+<meta property="og:title" content="RabbitMQ - Federated queue"/>
+<meta property="og:description" content="RabbitMQ Study - Federated queue"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="/rabbitmq-federated-queue.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:modified_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:author" content="/author/good-paper.html">
+<meta property="article:section" content="middleware"/>
+<meta property="article:tag" content="amqp"/>
+<meta property="article:tag" content="rabbitmq"/>
+<meta property="og:image" content="https://goodpaper.github.io/theme/img/profile.png">
+
+  <title>knowidea &ndash; RabbitMQ - Federated queue</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="">
+        <img src="https://goodpaper.github.io/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+
+
+      <nav>
+        <ul class="list">
+
+          <li><a href="" target="_blank">Man of my word.</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+          <li>
+            <a  class="sc-linkedin" href="https://www.linkedin.com/in/hozikim/" target="_blank">
+            <i class="fab fa-linkedin">
+            </i>
+          </a></li>
+          <li>
+            <a  class="sc-github" href="https://github.com/GoodPaper" target="_blank">
+            <i class="fab fa-github">
+            </i>
+          </a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="rabbitmq-federated-queue">RabbitMQ - Federated queue</h1>
+    <p>
+          Posted on Mon 28 January 2019 in <a href="/category/middleware.html">middleware</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <h1>Prologue</h1>
+<p>본 문서는 RabbitMQ의 Federated queue 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.</p>
+<h1>Introduce</h1>
+<p>Federated exchange 말고 Federated queue도 제공한다. 이 기능을 통해서 로드 밸런싱 효과를 줄 수 있다.<br/>
+Federated queue는 upstream queue라고 부를 수 있는 다른 큐들과 연결된다. upstream queue 역시 upstream exchange와 같이 본 환경을 위해서 재설정하거나, federated queue와 같은 broker나 cluster에 있을 필요는 없다.<br/>
+<br/><br/>
+<img alt="Federated queue" src="/images/rmq_federation/rmq_federation_06.png">
+<br/><br/>
+위 그림은 두 개의 RabbitMQ Node가 Queue federation으로 연결되어 있는 것을 도식화 한 것이다. 설정은 Downstream인 Federated queue가 있는 Broker만 설정해 주면 된다.</p>
+<h1>Typical Use Cases</h1>
+<p>일반적인 경우는 같은 Logical queue가 N개의 Broker에 분산된 경우이다.<br/>
+Logical Distributed queue는 Single queue보다 높은 가용성을 가지게 되는데...  상대적으로 Single queue일 때보다, Consume 처리량이 더 많다. (N개의 Client가 붙어있을 테니...) 고로, Federation mechanism은 로드 밸런싱을 위해서 사용된다.</p>
+<h1>Using Federated Queues</h1>
+<p>Federated queue는 보통 다릍 큐들과 동일하게 application으로 부터 선언이 되는데... Downstream에 있는 Node가 설정이 되어야 한다.<br/>
+설정은 별거 없이 policies를 선언하는 것으로 끝난다. Policy는 queue 이름을 매칭시키는 패턴인데, Matching queue가 federated 되는 것이다.</p>
+<blockquote>
+<p>Federated queue는 1개의 Policy만 따를 수 있다.<br/>
+여러개의 policy가 1개 queue 이름에 match되면, policy는 높은 우선 priority에만 적용된다.<br/>
+2개의 policy가 동일한 priority를 가지면, non-deterministically 하게 1개가 선택된다.
+<br/><br/>
+<img alt="Federated queue" src="/images/rmq_federation/rmq_federation_07.png">
+<br/><br/>
+Policy는 Management UI를 통해 수동으로 지정할 수도 있고, rabbitmqctl 혹은 HTTP API를 통해서도 설정할 수 있다.<br/>
+Federated queue는 다른 Federated queue의 upstream queue도 될 수 있는데, Loop를 만들 수도 있다.
+A, B 라는 큐가 서로 Upstream queue라고 지정해버리면, Loop가 되는 것임.</p>
+</blockquote>
+<h1>How it works</h1>
+<p>Federated queue는 자신과 연결된 모든 upstream queue와 AMQP로 연결된다. Federated queue를 설정할 때, upstream queue의 목록이 connection properties와 함께 전시된다. ( Exchange와 동일한 듯. )<br/>
+Federated queue는 Locally 메시지가 전부 소모되었거나, Consumer가 메시지를 요청하거나, upstream queue가 아직 Consume 되지 않은 여분의 메시지를 가지고 있을때, 메세지를 제공한다...???<br/>
+Federated queue가 원할 때만 메시지를 보내는 것은 Consumer priorities를 이용한다.<br/><br/>
+메시지들이 어떤 큐에서 다른 큐로 전달될때, 노드 간에 같은 Journey로 이동한 메시지들에 대해서만 메시지 순서가 보장이 된다. 같은 노드로 보낸다고 해도, 인접 노드를 거쳐서 가는 경우가 있을 수 있는데, 이 경우 메시지들은 queue federation을 이용해서 재정렬할 수도 있다.<br/><br/>
+각각의 큐는 각자 고유한 인자값을 받을 수 있다. x-max-length 라는 값을 federated queue에 설정하면, queue는 내부적으로 limit 값을 설정한다. 하지만 이를 federated 한 다른 큐들은 이 설정에 영향을 받지 않는다.<br/>
+Federated exchange와는 다르게, 메시지를 이동 숫자(hop)에 대한 제한은 없다.</p>
+<h1>Limitations</h1>
+<p>local queue가 없으면, basic.get으로 메시지를 받을 수 없다. basic.get은 synchronous method이기 때문에, 다른 모든 노드가 메시지들을 제공할 때까지 Blocking 해버린다.<br/><br/>
+서로 다른 버전의 Broker들이 같이 연결되어 돌아갈 수는 있으나, queue federation은 confumer priorities를 필요로 하기 때문에, 3.2.0 version 이전의 버전과는 호환될 수 없다.</p>
+<h1>Pitfalls</h1>
+<p>Federated queue는 현재 multiple hop을 이동할 수 없게 되어 있다.</p>
+<blockquote>
+<p>예를 들면, A, B, C 큐가 있는데, A-B, B-C 이렇게 연결되어 있다. ( 즉 A - B - C 이렇게... )<br/>
+매시지가 A에 있고, C에서 Consumer가 대기하고 있으면, B에 Consumer가 있지 않는 한, 그 메시지는 C까지 이동할 수 없다.</p>
+</blockquote>
+<p>Federated queue와 Federated exchange를 bind 하는 것은 가능하지만, 원하는 결과가 나오지 않을 수 있다. Federated exchange는 메시지를 upstream exchange에서 발송하는데, binding에 matching이 되는 곳엔 전부 메시지를 보낸다. Federated queue는 이 메시지를 연결된 노드로 보낼텐데... 이렇게 되면, 맨 끝의 노드에서는 같은 메시지의 여러 Copy를 받을 수 있게 된다.</p>
+<h1>Reference</h1>
+<ol>
+<li>https://www.rabbitmq.com/federated-queues.html</li>
+<li>https://medium.com/@jooyunghan/non-deterministic-c8c8d4fc4424</li>
+</ol>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="/tag/amqp.html">amqp</a>
+      <a href="/tag/rabbitmq.html">rabbitmq</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'https-goodpaper-github-io';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " knowidea ",
+  "url" : "",
+  "image": "https://goodpaper.github.io/theme/img/profile.png",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

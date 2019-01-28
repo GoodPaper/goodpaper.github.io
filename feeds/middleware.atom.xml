@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - middleware</title><link href="/" rel="alternate"></link><link href="/feeds/middleware.atom.xml" rel="self"></link><id>/</id><updated>2019-01-28T12:00:00+09:00</updated><entry><title>RabbitMQ - Federation</title><link href="/rabbitmq-federation.html" rel="alternate"></link><published>2019-01-28T12:00:00+09:00</published><updated>2019-01-28T12:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federation.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federation&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Prologue&lt;/h1&gt;
-&lt;p&gt;본 문서는 RabbitMQ의 Federation 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>knowidea - middleware</title><link href="/" rel="alternate"></link><link href="/feeds/middleware.atom.xml" rel="self"></link><id>/</id><updated>2019-01-28T19:00:00+09:00</updated><entry><title>RabbitMQ - Federated exchange</title><link href="/rabbitmq-federated-exchange.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federated-exchange.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federated exchange&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Prologue&lt;/h1&gt;
+&lt;p&gt;본 문서는 RabbitMQ의 Federated exchange 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.&lt;/p&gt;
 &lt;h1&gt;Requirement&lt;/h1&gt;
 &lt;p&gt;A 장비에 있는 RabbitMQ broker의 Exchange를 통해 나가는 메시지가 B 장비에 있는 RabbitMQ broker의 Queue에 들어가야 하는 요구사항이 있었기에, Federation을 찾아보게 되었습니다.&lt;/p&gt;
 &lt;h1&gt;What does a federated exchange do?&lt;/h1&gt;
@@ -64,6 +64,117 @@ Ring 안에 6개의 브로커가 단일 링크로 연결되어 있다. max-hops=
 &lt;h1&gt;Reference&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;https://www.rabbitmq.com/federated-exchanges.html&lt;/li&gt;
+&lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - Federated queue</title><link href="/rabbitmq-federated-queue.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federated-queue.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federated queue&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Prologue&lt;/h1&gt;
+&lt;p&gt;본 문서는 RabbitMQ의 Federated queue 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.&lt;/p&gt;
+&lt;h1&gt;Introduce&lt;/h1&gt;
+&lt;p&gt;Federated exchange 말고 Federated queue도 제공한다. 이 기능을 통해서 로드 밸런싱 효과를 줄 수 있다.&lt;br/&gt;
+Federated queue는 upstream queue라고 부를 수 있는 다른 큐들과 연결된다. upstream queue 역시 upstream exchange와 같이 본 환경을 위해서 재설정하거나, federated queue와 같은 broker나 cluster에 있을 필요는 없다.&lt;br/&gt;
+&lt;br/&gt;&lt;br/&gt;
+&lt;img alt="Federated queue" src="/images/rmq_federation/rmq_federation_06.png"&gt;
+&lt;br/&gt;&lt;br/&gt;
+위 그림은 두 개의 RabbitMQ Node가 Queue federation으로 연결되어 있는 것을 도식화 한 것이다. 설정은 Downstream인 Federated queue가 있는 Broker만 설정해 주면 된다.&lt;/p&gt;
+&lt;h1&gt;Typical Use Cases&lt;/h1&gt;
+&lt;p&gt;일반적인 경우는 같은 Logical queue가 N개의 Broker에 분산된 경우이다.&lt;br/&gt;
+Logical Distributed queue는 Single queue보다 높은 가용성을 가지게 되는데...  상대적으로 Single queue일 때보다, Consume 처리량이 더 많다. (N개의 Client가 붙어있을 테니...) 고로, Federation mechanism은 로드 밸런싱을 위해서 사용된다.&lt;/p&gt;
+&lt;h1&gt;Using Federated Queues&lt;/h1&gt;
+&lt;p&gt;Federated queue는 보통 다릍 큐들과 동일하게 application으로 부터 선언이 되는데... Downstream에 있는 Node가 설정이 되어야 한다.&lt;br/&gt;
+설정은 별거 없이 policies를 선언하는 것으로 끝난다. Policy는 queue 이름을 매칭시키는 패턴인데, Matching queue가 federated 되는 것이다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Federated queue는 1개의 Policy만 따를 수 있다.&lt;br/&gt;
+여러개의 policy가 1개 queue 이름에 match되면, policy는 높은 우선 priority에만 적용된다.&lt;br/&gt;
+2개의 policy가 동일한 priority를 가지면, non-deterministically 하게 1개가 선택된다.
+&lt;br/&gt;&lt;br/&gt;
+&lt;img alt="Federated queue" src="/images/rmq_federation/rmq_federation_07.png"&gt;
+&lt;br/&gt;&lt;br/&gt;
+Policy는 Management UI를 통해 수동으로 지정할 수도 있고, rabbitmqctl 혹은 HTTP API를 통해서도 설정할 수 있다.&lt;br/&gt;
+Federated queue는 다른 Federated queue의 upstream queue도 될 수 있는데, Loop를 만들 수도 있다.
+A, B 라는 큐가 서로 Upstream queue라고 지정해버리면, Loop가 되는 것임.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1&gt;How it works&lt;/h1&gt;
+&lt;p&gt;Federated queue는 자신과 연결된 모든 upstream queue와 AMQP로 연결된다. Federated queue를 설정할 때, upstream queue의 목록이 connection properties와 함께 전시된다. ( Exchange와 동일한 듯. )&lt;br/&gt;
+Federated queue는 Locally 메시지가 전부 소모되었거나, Consumer가 메시지를 요청하거나, upstream queue가 아직 Consume 되지 않은 여분의 메시지를 가지고 있을때, 메세지를 제공한다...???&lt;br/&gt;
+Federated queue가 원할 때만 메시지를 보내는 것은 Consumer priorities를 이용한다.&lt;br/&gt;&lt;br/&gt;
+메시지들이 어떤 큐에서 다른 큐로 전달될때, 노드 간에 같은 Journey로 이동한 메시지들에 대해서만 메시지 순서가 보장이 된다. 같은 노드로 보낸다고 해도, 인접 노드를 거쳐서 가는 경우가 있을 수 있는데, 이 경우 메시지들은 queue federation을 이용해서 재정렬할 수도 있다.&lt;br/&gt;&lt;br/&gt;
+각각의 큐는 각자 고유한 인자값을 받을 수 있다. x-max-length 라는 값을 federated queue에 설정하면, queue는 내부적으로 limit 값을 설정한다. 하지만 이를 federated 한 다른 큐들은 이 설정에 영향을 받지 않는다.&lt;br/&gt;
+Federated exchange와는 다르게, 메시지를 이동 숫자(hop)에 대한 제한은 없다.&lt;/p&gt;
+&lt;h1&gt;Limitations&lt;/h1&gt;
+&lt;p&gt;local queue가 없으면, basic.get으로 메시지를 받을 수 없다. basic.get은 synchronous method이기 때문에, 다른 모든 노드가 메시지들을 제공할 때까지 Blocking 해버린다.&lt;br/&gt;&lt;br/&gt;
+서로 다른 버전의 Broker들이 같이 연결되어 돌아갈 수는 있으나, queue federation은 confumer priorities를 필요로 하기 때문에, 3.2.0 version 이전의 버전과는 호환될 수 없다.&lt;/p&gt;
+&lt;h1&gt;Pitfalls&lt;/h1&gt;
+&lt;p&gt;Federated queue는 현재 multiple hop을 이동할 수 없게 되어 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;예를 들면, A, B, C 큐가 있는데, A-B, B-C 이렇게 연결되어 있다. ( 즉 A - B - C 이렇게... )&lt;br/&gt;
+매시지가 A에 있고, C에서 Consumer가 대기하고 있으면, B에 Consumer가 있지 않는 한, 그 메시지는 C까지 이동할 수 없다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Federated queue와 Federated exchange를 bind 하는 것은 가능하지만, 원하는 결과가 나오지 않을 수 있다. Federated exchange는 메시지를 upstream exchange에서 발송하는데, binding에 matching이 되는 곳엔 전부 메시지를 보낸다. Federated queue는 이 메시지를 연결된 노드로 보낼텐데... 이렇게 되면, 맨 끝의 노드에서는 같은 메시지의 여러 Copy를 받을 수 있게 된다.&lt;/p&gt;
+&lt;h1&gt;Reference&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;https://www.rabbitmq.com/federated-queues.html&lt;/li&gt;
+&lt;li&gt;https://medium.com/@jooyunghan/non-deterministic-c8c8d4fc4424&lt;/li&gt;
+&lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - Federation</title><link href="/rabbitmq-federation.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federation.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federation&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Federation plugin을 통해서, 클러스터링 없이, broker 사이에 메시지를 전달할 수 있다. 몇 개의 유용한 이유를 나열하자면...&lt;/p&gt;
+&lt;h3&gt;1. Loose coupling of nodes or clusters&lt;/h3&gt;
+&lt;p&gt;서로 다른 adminstrative domain을 가진 broker나 cluster 간에 메시지를 공유 할 수 있다.
+- 각자 다른 User와 Virtual host를 가지고 있을 수 있다.
+- 각자 다른 Version의 RabbitMQ와 Erlang을 사용할 수도 있다.&lt;/p&gt;
+&lt;h3&gt;2. WAN Freidliness&lt;/h3&gt;
+&lt;p&gt;AMQP 0.9.1을 사용하는데, 이는 간헐적 접속 장애에 대한 내구성을 지니고 있다.&lt;/p&gt;
+&lt;h3&gt;3. Specifity&lt;/h3&gt;
+&lt;p&gt;Broker에서 federated component를 가질수 있다. 다시 말하면, 우리가 원하지 않으면, 모든 것을 federate 하지 않아도 된다.&lt;/p&gt;
+&lt;h3&gt;4. Scalability with growing connected node count&lt;/h3&gt;
+&lt;p&gt;Federation은 N개의 Broker 사이에서 O(n2)의 connection을 할 필요가 없다.&lt;/p&gt;
+&lt;h1&gt;What does it do?&lt;/h1&gt;
+&lt;p&gt;이 플러그인을 통해서 Exchange나 queue를 Federate 할 수 있다. Federated exchange나 queue는 1개 이상의 upstream 에서 메시지를 수신할 수 있다.&lt;br/&gt;
+Upstream으로 연결하려면 RabbitMQ Erlang client를 이용해야 한다.&lt;/p&gt;
+&lt;h1&gt;How is federation set up?&lt;/h1&gt;
+&lt;p&gt;2가지 방법이 있다.
+ - Runtime parameter로 설정
+ - Federation management plugin으로 설정 ( Management UI의 Federation tap을 추가해 준다. )&lt;/p&gt;
+&lt;p&gt;1개 이상의 policies를 이용하여 federation을 구성할 수 있다.&lt;/p&gt;
+&lt;h1&gt;Getting started&lt;/h1&gt;
+&lt;p&gt;아래 명령을 입력하여 플러그인을 활성화 한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmq-plugins &lt;span class="nb"&gt;enable&lt;/span&gt; rabbitmq_federation
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;management plugin을 이용해서 federation을 구축하려면 아래 명령어를 입력한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmq-plugins &lt;span class="nb"&gt;enable&lt;/span&gt; rabbitmq_federation_management
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;br/&gt;
+Federation의 upstream과 관련된 정보는 RabbitMQ Database에 저장이 된다. ( user, permission, queue 등... )&lt;br/&gt;
+Federation을 구축하기 위해선 3단계의 설정이 필요하다.&lt;br/&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Upstreams: 각 upstream은 어떻게 다른 broker에 접속할 지 정의되어야 한다.&lt;/li&gt;
+&lt;li&gt;Upstream sets: 각 upstream set는 1개의 upstream set로 구성되어 있다...?&lt;/li&gt;
+&lt;li&gt;Policies: 각 Policy는 Exchange 혹은 Queue 혹은 두 개의 혼합의 set로 구성되며, single upstream이나 upstream set에 적용된다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;upstream이나 upstream set는 둘다 runtime parameter이다. Parameter와 policies는 3가지 방법을 통해서 설정될 수 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;rabbitmqctl 혹은 HTTP API 혹은 management ui를 통해서...&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1&gt;A simple example&lt;/h1&gt;
+&lt;p&gt;default exchange를 제외한 모든 built-in exchange를 1개의 upstream과 federate 해본다. Upstream은 1시간 후에 종료되는 것으로 설정한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmqctl set_parameter federation-upstream my-upstream &lt;span class="s1"&gt;&amp;#39;{&amp;quot;uri&amp;quot;:&amp;quot;amqp://server-name&amp;quot;, &amp;quot;expires&amp;quot;:3600000}&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;그 다음, built-in exchange과 matching되는 policy를 만들고 이를 upstream에 사용한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmqctl set_policy --apply-to exchanges federate-me &lt;span class="s2"&gt;&amp;quot;^amq\.&amp;quot;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;federation-upstream-set&amp;quot;:&amp;quot;all&amp;quot;}&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;"amq."라고 시작하는 모든 Exchange에 대해서 federate을 하고, 'all'이라는 이름의 upstream set와 federation을 구성하였다. 아래 명령을 통해서 적용 여부를 확인할 수 있다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmqctl list_exchanges name policy &lt;span class="p"&gt;|&lt;/span&gt; grep federated-me
+$ rabbitmqctl &lt;span class="nb"&gt;eval&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;rabbit_federation_status:status().&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Reference&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;https://www.rabbitmq.com/federation.html&lt;/li&gt;
+&lt;li&gt;https://www.rabbitmq.com/uri-spec.html&lt;/li&gt;
 &lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - #00</title><link href="/rabbitmq-00.html" rel="alternate"></link><published>2019-01-25T11:30:00+09:00</published><updated>2019-01-25T11:30:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-25:/rabbitmq-00.html</id><summary type="html">&lt;p&gt;RabbitMQ Study #00&lt;/p&gt;</summary><content type="html">&lt;h2&gt;Prologue&lt;/h2&gt;
 &lt;p&gt;여기서는 몇장의 이미지만 올립니다.&lt;/p&gt;
 &lt;h2&gt;Definition&lt;/h2&gt;

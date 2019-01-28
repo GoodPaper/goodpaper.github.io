@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="/theme/pygments/monokai.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/fontawesome.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/brands.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/solid.css">
+
+
+    <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="knowidea Atom">
+
+
+    <link rel="shortcut icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+
+
+
+<meta name="author" content="good-paper" />
+<meta name="description" content="RabbitMQ Study - Federated exchange" />
+<meta name="keywords" content="amqp, rabbitmq">
+
+<meta property="og:site_name" content="knowidea"/>
+<meta property="og:title" content="RabbitMQ - Federated exchange"/>
+<meta property="og:description" content="RabbitMQ Study - Federated exchange"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="/rabbitmq-federated-exchange.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:modified_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:author" content="/author/good-paper.html">
+<meta property="article:section" content="middleware"/>
+<meta property="article:tag" content="amqp"/>
+<meta property="article:tag" content="rabbitmq"/>
+<meta property="og:image" content="https://goodpaper.github.io/theme/img/profile.png">
+
+  <title>knowidea &ndash; RabbitMQ - Federated exchange</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="">
+        <img src="https://goodpaper.github.io/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+
+
+      <nav>
+        <ul class="list">
+
+          <li><a href="" target="_blank">Man of my word.</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+          <li>
+            <a  class="sc-linkedin" href="https://www.linkedin.com/in/hozikim/" target="_blank">
+            <i class="fab fa-linkedin">
+            </i>
+          </a></li>
+          <li>
+            <a  class="sc-github" href="https://github.com/GoodPaper" target="_blank">
+            <i class="fab fa-github">
+            </i>
+          </a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="rabbitmq-federated-exchange">RabbitMQ - Federated exchange</h1>
+    <p>
+          Posted on Mon 28 January 2019 in <a href="/category/middleware.html">middleware</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <h1>Prologue</h1>
+<p>본 문서는 RabbitMQ의 Federated exchange 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.</p>
+<h1>Requirement</h1>
+<p>A 장비에 있는 RabbitMQ broker의 Exchange를 통해 나가는 메시지가 B 장비에 있는 RabbitMQ broker의 Queue에 들어가야 하는 요구사항이 있었기에, Federation을 찾아보게 되었습니다.</p>
+<h1>What does a federated exchange do?</h1>
+<p>Federated Exchange는 다른 Exchange(upstream exchange)에 연결되고, Upstream exchange에 발송된 메시지는 Federated exchange에 복사가 된다. ( 아래 그림을 우선 보시면 무슨 내용인지 이해가 갈 겁니다. )<br/>
+Upstream exchange는 본 작업을 위해서 재설정을 하지 않아도 되고, 같은 Broker나 같은 Cluster에 없어도 된다.<br/>
+아래 그림은 1개의 Broker에 있는 1개의 Single federated exchange가 다른 Broker들에 소속된 Upstreaming Exchange 들에 연결되어 있는 것을 도식화 한 것이다.<br/>
+<br/><br/>
+<img alt="RabbitMQ Federation" src="/images/rmq_federation/rmq_federation_00.png">
+<br/><br/></p>
+<h3>1. Are all messages copied?</h3>
+<p>원하는 메시지만 복사할 수도 있다. 이 설정은 federation plugin을 통해서 설정할 수 있는데, 그 방법은 아래에 나온다.</p>
+<h3>2. How does a federated exchange link to its upstream exchanges?</h3>
+<p>Federated exchange를 설정하면, 각 Upstream exchange들의 목록이 Connection properties와 함께 보여진다.</p>
+<h3>3. Can I federate a federated exchange?</h3>
+<p>Federated exchange를 upstream exchange로 사용하는 것을 막을 방법은 없다...</p>
+<blockquote>
+<p>Loop Case: A, B Exchange가 서로를 upstream exchange라고 설정하면, 이게 Loop가 되는 것임...</p>
+</blockquote>
+<p>여러 개의 Exchange로 형성된 Infinite Loop이 있을 수 있는데... 이 때 메시지가 계속 re-route되는 것을 막고 싶다면, 메시지가 복사되는 최대 회수를 제한하면 된다. max-hop 참고.</p>
+<h3>4. Can I federate any exchange?</h3>
+<p>거의 다 된다고 보면된다. 단, Default exchange( '' )를 federate 할 수는 없다. ( 이건, Queue에 직접 접근할 때 사용하는 것이기 때문... )<br/>
+그 외에 RabbitMQ가 내부적으로 사용하는 Exchange에 대해서는 사용할 수 없음.</p>
+<h3>5. What are typical uses for federated exchanges?</h3>
+<p>일반적으로 사용하는 Logical Exchange를 N개의 다른 Broker의 Exchange로 분산시킬때 사용한다.<br/>
+또 다른 예로는 1개의 Massive fanout을 수행하는 Exchange가 N개의 다른 Broker에 메시지를 전달하는 경우가 있다.<br/></p>
+<h1>Implementation</h1>
+<p>Inter-broker communication은 AMQP로 구현된다. Binding은 같이 설정되고, bind / unbind 명령은 upstream exchange로 전송된다. 따라서, federated exchange는 subscription을 갖고 있어야만 메시지를 받을 수 있다.<br/>
+Binding이 설정될 때, upstream으로는 비동기적으로 명령이 발송되기 때문에, adding / removing binding의 효과는 (메시지가 왔다갔다 하는 것이) 보여질 때 비로소 보증된다...???<br/><br/>
+메시지는 upstream exchange가 있는 브로커의 특정 큐에 버퍼링된다. 이를 <strong>Upstreaming queue</strong>라고 한다.<br/>
+아래는 1개의 Federated exchange와 1개의 Upstream exchange가 연결된 것을 보여준다. 그림에서 보면 왼쪽의 회색으로 표현된 upstream queue가 보이는데, upstreaming queue를 이용해서 binding이 된 것을 표현하는 것이다.<br/>
+upstream link에 있는 두꺼운 화살표는 메시지가 federated exchange로 republish 되는 것을 표현한 것이다.
+<br/><br/>
+<img alt="1:1 Topology" src="/images/rmq_federation/rmq_federation_01.png">
+<br/><br/>
+두 개의 Exchange에 무언가를 보내면, federated exchange에 연결된 queue에서 그 정보를 받을 것이다. 하지만, Federated exchange(오른쪽)에 메시지를 직접 보내면, upstream exchange가 있는 브로커 내의 queue(왼쪽 아래)는 그 메시지를 받을 수 없다.</p>
+<h1>Example topologies</h1>
+<p>여러가지 Topology를 보여줄 텐데, RabbitMQ broker는 주황색 토끼 얼굴로 표시된다. (cluster가 될 수도 있음.)</p>
+<h3>1. Pair of federated exchanges</h3>
+<p><br/><br/>
+<img alt="1:1 pair" src="/images/rmq_federation/rmq_federation_02.png">
+<br/><br/>
+각 Exchange는 서로 대칭된 상태로 연결되어 있다. 두 개의 Consumer가 각자의 Publisher가 보낸 메시지를 받을 수 있다.<br/>
+각 링크는 max-hops=1로 설정되어 있는데, 이는 메시지가 1번만 복사된다는 의미이다. ( 1 이상으로 설정하면, 동일한 메시지의 Multiple copy를 볼 수 있게 되니... 꼬이게 됨... )</p>
+<h3>2. Small complete graph</h3>
+<p><br/><br/>
+<img alt="small complete graph" src="/images/rmq_federation/rmq_federation_03.png">
+<br/><br/>
+위와 유사하되, 3개의 Exchange가 서로 맞물려 있는 상태이다. 여기서도 max-hops=1로 지정한다. (지정된 녀석에게만 전달되도록...)</p>
+<h3>3. Fan-out</h3>
+<p><br/><br/>
+<img alt="fan-out" src="/images/rmq_federation/rmq_federation_04.png">
+<br/><br/>
+1개의 Master exchange가 tree 형태로 다른 Exchange와 연결되고, Depth가 깊어질 수록 확장되는 형태이다. Tree에 연결된 Exchange node들은 모두 Master가 보낸 메시지를 받을 수 있다.<br/>
+Loop이 없기 때문에, max-hops 값이 크게 중요하지는 않지만, 적어도, longest depth 값 만큼은 입력이 되야 된다. (그래야 끝까지 전달이 되지...) Tree level - 1 값이면 된다.</p>
+<h3>4. Ring</h3>
+<p><br/><br/>
+<img alt="ring" src="/images/rmq_federation/rmq_federation_05.png">
+<br/><br/>
+Ring 안에 6개의 브로커가 단일 링크로 연결되어 있다. max-hops=5이기 때문에, 어떤 메시지를 보냈을 때, 자기 자신한테까지 돌아오지는 않는다.<br/>
+1개의 Broker가 오동작을 일으키면, 이 토폴로지 자체가 깨지기 때문에, 상대적으로 견고하지는 않은 Topology이다.</p>
+<h1>Reference</h1>
+<ol>
+<li>https://www.rabbitmq.com/federated-exchanges.html</li>
+</ol>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="/tag/amqp.html">amqp</a>
+      <a href="/tag/rabbitmq.html">rabbitmq</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'https-goodpaper-github-io';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " knowidea ",
+  "url" : "",
+  "image": "https://goodpaper.github.io/theme/img/profile.png",
+  "description": ""
+}
+</script>
+
+</body>
+</html>
