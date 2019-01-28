@@ -82,7 +82,7 @@ type: direct ( fanout, topic are also possible. )&lt;br/&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;create queue&lt;blockquote&gt;
-&lt;p&gt;vhost: test ( smae as above )&lt;br/&gt;
+&lt;p&gt;vhost: test ( same as above )&lt;br/&gt;
 name: : &lt;strong&gt;custom-exchange-queue&lt;/strong&gt; ( whatever you want )&lt;br/&gt;
 bind: exchange is &lt;strong&gt;custom-exchange&lt;/strong&gt; | routing key is &lt;strong&gt;test&lt;/strong&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
