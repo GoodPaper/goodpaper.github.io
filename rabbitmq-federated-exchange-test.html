@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="/theme/pygments/monokai.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/fontawesome.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/brands.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/solid.css">
+
+
+    <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="knowidea Atom">
+
+
+    <link rel="shortcut icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://goodpaper.github.io/theme/img/favicon.ico" type="image/x-icon">
+
+
+
+<meta name="author" content="good-paper" />
+<meta name="description" content="RabbitMQ Study - Federated exchange test" />
+<meta name="keywords" content="amqp, rabbitmq">
+
+<meta property="og:site_name" content="knowidea"/>
+<meta property="og:title" content="RabbitMQ - Federated exchange test"/>
+<meta property="og:description" content="RabbitMQ Study - Federated exchange test"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="/rabbitmq-federated-exchange-test.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:modified_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:author" content="/author/good-paper.html">
+<meta property="article:section" content="middleware"/>
+<meta property="article:tag" content="amqp"/>
+<meta property="article:tag" content="rabbitmq"/>
+<meta property="og:image" content="https://goodpaper.github.io/theme/img/profile.png">
+
+  <title>knowidea &ndash; RabbitMQ - Federated exchange test</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="">
+        <img src="https://goodpaper.github.io/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+
+
+      <nav>
+        <ul class="list">
+
+          <li><a href="" target="_blank">Man of my word.</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+          <li>
+            <a  class="sc-linkedin" href="https://www.linkedin.com/in/hozikim/" target="_blank">
+            <i class="fab fa-linkedin">
+            </i>
+          </a></li>
+          <li>
+            <a  class="sc-github" href="https://github.com/GoodPaper" target="_blank">
+            <i class="fab fa-github">
+            </i>
+          </a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="rabbitmq-federated-exchange-test">RabbitMQ - Federated exchange test</h1>
+    <p>
+          Posted on Mon 28 January 2019 in <a href="/category/middleware.html">middleware</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <h1>Prologue</h1>
+<p>RabbitMQ의 Federated exchange를 구성해 봅니다. 아래 참조에 있는 Youtube를 참고하였습니다.</p>
+<h2>0. Prerequisite</h2>
+<p>Following plugins should be enabled.</p>
+<div class="highlight"><pre><span></span>$ rabbitmq-plugins <span class="nb">enable</span> rabbitmq_federation
+$ rabbitmq-plugins <span class="nb">enable</span> rabbitmq_federation_management
+</pre></div>
+
+
+<h2>1. Define exchange and queue in both( Upstream and Downstream ) broker.</h2>
+<ol>
+<li>create exchange<blockquote>
+<p>vhost: test ( whatever you made )
+name: <strong>custom-exchange</strong> ( whatever you want )
+type: direct ( fanout, topic are also possible. )</p>
+</blockquote>
+</li>
+<li>create queue<blockquote>
+<p>vhost: test ( smae as above )
+name: : <strong>custom-exchange-queue</strong> ( whatever you want )
+bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test</strong></p>
+</blockquote>
+</li>
+</ol>
+<h2>2. Define upstream in downstream broker.</h2>
+<p>By management web, goto admin -&gt; federation upstreams - add a new upstream
+1. vhost: test
+2. name: <strong>A-2-B</strong>
+3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost
+<br/><br/></p>
+<p>By CLI</p>
+<div class="highlight"><pre><span></span>rabbitmqctl set_parameter federation-upstream A-2-B <span class="s1">&#39;{&quot;uri&quot;:&quot;amqp://user:password@ip_of_upstream_broker:port/vhost&quot;}&#39;</span>
+</pre></div>
+
+
+<h2>3. Define policy in downstream broker.</h2>
+<p>By management web, goto admin -&gt; policies -&gt; add / update a policy.
+1. vhost: test
+2. name: <strong>A-2-B-POLICY</strong>
+3. pattern: <strong>custom-exchange-queue</strong>
+4. definition: federation-upstream-set = all</p>
+<blockquote>
+<p>definition parameter에 대한 내용은 더 알아봐야 겠습니다...</p>
+</blockquote>
+<p>By CLI,</p>
+<div class="highlight"><pre><span></span>$ rabbitmqctl set_policy --apply-to exchanges A-2-B-POLICY <span class="s2">&quot;custom-exchange-queue&quot;</span> <span class="s1">&#39;{&quot;federation-upstream-set&quot;:&quot;all&quot;}&#39;</span>
+</pre></div>
+
+
+<h2>4. Check federation status</h2>
+<p>By management web, admin -&gt; federation status.</p>
+<h1>TEST</h1>
+<ol>
+<li>In upstream broker, publish message in 'Exchange' with routing key.</li>
+<li>In downstream broker, get messages in 'Queue'.</li>
+</ol>
+<h1>Reference</h1>
+<ol>
+<li>https://www.youtube.com/watch?v=-ysZPO_3HF0</li>
+<li>https://jee-appy.blogspot.com/2018/08/setup-rabbitmq-exchange-federation.html</li>
+</ol>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="/tag/amqp.html">amqp</a>
+      <a href="/tag/rabbitmq.html">rabbitmq</a>
+    </p>
+  </div>
+
+
+
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'https-goodpaper-github-io';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " knowidea ",
+  "url" : "",
+  "image": "https://goodpaper.github.io/theme/img/profile.png",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

@@ -64,6 +64,66 @@ Ring 안에 6개의 브로커가 단일 링크로 연결되어 있다. max-hops=
 &lt;h1&gt;Reference&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;https://www.rabbitmq.com/federated-exchanges.html&lt;/li&gt;
+&lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - Federated exchange test</title><link href="/rabbitmq-federated-exchange-test.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federated-exchange-test.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federated exchange test&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Prologue&lt;/h1&gt;
+&lt;p&gt;RabbitMQ의 Federated exchange를 구성해 봅니다. 아래 참조에 있는 Youtube를 참고하였습니다.&lt;/p&gt;
+&lt;h2&gt;0. Prerequisite&lt;/h2&gt;
+&lt;p&gt;Following plugins should be enabled.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmq-plugins &lt;span class="nb"&gt;enable&lt;/span&gt; rabbitmq_federation
+$ rabbitmq-plugins &lt;span class="nb"&gt;enable&lt;/span&gt; rabbitmq_federation_management
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;1. Define exchange and queue in both( Upstream and Downstream ) broker.&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;create exchange&lt;blockquote&gt;
+&lt;p&gt;vhost: test ( whatever you made )
+name: &lt;strong&gt;custom-exchange&lt;/strong&gt; ( whatever you want )
+type: direct ( fanout, topic are also possible. )&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;create queue&lt;blockquote&gt;
+&lt;p&gt;vhost: test ( smae as above )
+name: : &lt;strong&gt;custom-exchange-queue&lt;/strong&gt; ( whatever you want )
+bind: exchange is &lt;strong&gt;custom-exchange&lt;/strong&gt; | routing key is &lt;strong&gt;test&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;2. Define upstream in downstream broker.&lt;/h2&gt;
+&lt;p&gt;By management web, goto admin -&amp;gt; federation upstreams - add a new upstream
+1. vhost: test
+2. name: &lt;strong&gt;A-2-B&lt;/strong&gt;
+3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost
+&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;By CLI&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rabbitmqctl set_parameter federation-upstream A-2-B &lt;span class="s1"&gt;&amp;#39;{&amp;quot;uri&amp;quot;:&amp;quot;amqp://user:password@ip_of_upstream_broker:port/vhost&amp;quot;}&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;3. Define policy in downstream broker.&lt;/h2&gt;
+&lt;p&gt;By management web, goto admin -&amp;gt; policies -&amp;gt; add / update a policy.
+1. vhost: test
+2. name: &lt;strong&gt;A-2-B-POLICY&lt;/strong&gt;
+3. pattern: &lt;strong&gt;custom-exchange-queue&lt;/strong&gt;
+4. definition: federation-upstream-set = all&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;definition parameter에 대한 내용은 더 알아봐야 겠습니다...&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;By CLI,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmqctl set_policy --apply-to exchanges A-2-B-POLICY &lt;span class="s2"&gt;&amp;quot;custom-exchange-queue&amp;quot;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;federation-upstream-set&amp;quot;:&amp;quot;all&amp;quot;}&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;4. Check federation status&lt;/h2&gt;
+&lt;p&gt;By management web, admin -&amp;gt; federation status.&lt;/p&gt;
+&lt;h1&gt;TEST&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;In upstream broker, publish message in 'Exchange' with routing key.&lt;/li&gt;
+&lt;li&gt;In downstream broker, get messages in 'Queue'.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1&gt;Reference&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;https://www.youtube.com/watch?v=-ysZPO_3HF0&lt;/li&gt;
+&lt;li&gt;https://jee-appy.blogspot.com/2018/08/setup-rabbitmq-exchange-federation.html&lt;/li&gt;
 &lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - Federated queue</title><link href="/rabbitmq-federated-queue.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federated-queue.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federated queue&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Prologue&lt;/h1&gt;
 &lt;p&gt;본 문서는 RabbitMQ의 Federated queue 개념에 대한 문서를 해석한 문서입니다. 의역이 있을 수 있으니 이 점 참고해 주세요.&lt;/p&gt;
 &lt;h1&gt;Introduce&lt;/h1&gt;
