@@ -37,7 +37,7 @@
 <meta property="og:url" content="/rabbitmq-federated-exchange-test.html"/>
 <meta property="og:type" content="article"/>
 <meta property="article:published_time" content="2019-01-28 19:00:00+09:00"/>
-<meta property="article:modified_time" content="2019-01-28 19:00:00+09:00"/>
+<meta property="article:modified_time" content="2019-01-29 09:00:00+09:00"/>
 <meta property="article:author" content="/author/good-paper.html">
 <meta property="article:section" content="middleware"/>
 <meta property="article:tag" content="amqp"/>
@@ -149,7 +149,10 @@ bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test
 3. pattern: <strong>custom-exchange-queue</strong><br/>
 4. definition: federation-upstream-set = all<br/></p>
 <blockquote>
-<p>definition parameter에 대한 내용은 더 알아봐야 겠습니다...<br/></p>
+<p>federation-upstream-set = all -&gt; To apply all upstreams<br/>
+federation-upstream-set = OOO -&gt; To apply a named set of upstreams<br/>
+federation-upstream = OOO -&gt; To apply a <strong>single upstream.</strong><br/><br/>
+<br/><br/></p>
 </blockquote>
 <p>By CLI,</p>
 <div class="highlight"><pre><span></span>$ rabbitmqctl set_policy --apply-to exchanges A-2-B-POLICY <span class="s2">&quot;custom-exchange-queue&quot;</span> <span class="s1">&#39;{&quot;federation-upstream-set&quot;:&quot;all&quot;}&#39;</span>
@@ -157,7 +160,21 @@ bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test
 
 
 <h2>4. Check federation status</h2>
-<p>By management web, admin -&gt; federation status.</p>
+<p>By management web, admin -&gt; federation status.
+<br/><br/>
+By CLI, use rabbitmqctl</p>
+<div class="highlight"><pre><span></span>$ rabbitmqctl <span class="nb">eval</span> <span class="s1">&#39;rabbit_federation_status:status().&#39;</span>
+
+<span class="c1"># type: exchange or queue depending on what type of federated object this link relates to</span>
+<span class="c1"># name: name of federated</span>
+<span class="c1"># upstream_name: name of upstream</span>
+<span class="c1"># vhost: vhost containing federation</span>
+<span class="c1"># connection: name of connection for this link</span>
+<span class="c1"># status: starting | running(LocalConnectionName) | shutdown(Error)</span>
+<span class="c1"># timestamp: time status was last updated.</span>
+</pre></div>
+
+
 <h1>TEST</h1>
 <ol>
 <li>In upstream broker, publish message in 'Exchange' with routing key.<br/></li>
@@ -167,6 +184,7 @@ bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test
 <ol>
 <li>https://www.youtube.com/watch?v=-ysZPO_3HF0</li>
 <li>https://jee-appy.blogspot.com/2018/08/setup-rabbitmq-exchange-federation.html</li>
+<li>https://www.rabbitmq.com/federation-reference.html</li>
 </ol>
   </div>
   <div class="tag-cloud">
