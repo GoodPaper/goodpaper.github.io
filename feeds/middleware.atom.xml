@@ -76,23 +76,23 @@ $ rabbitmq-plugins &lt;span class="nb"&gt;enable&lt;/span&gt; rabbitmq_federatio
 &lt;h2&gt;1. Define exchange and queue in both( Upstream and Downstream ) broker.&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;create exchange&lt;blockquote&gt;
-&lt;p&gt;vhost: test ( whatever you made )
-name: &lt;strong&gt;custom-exchange&lt;/strong&gt; ( whatever you want )
-type: direct ( fanout, topic are also possible. )&lt;/p&gt;
+&lt;p&gt;vhost: test ( whatever you made )&lt;br/&gt;
+name: &lt;strong&gt;custom-exchange&lt;/strong&gt; ( whatever you want )&lt;br/&gt;
+type: direct ( fanout, topic are also possible. )&lt;br/&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;create queue&lt;blockquote&gt;
-&lt;p&gt;vhost: test ( smae as above )
-name: : &lt;strong&gt;custom-exchange-queue&lt;/strong&gt; ( whatever you want )
-bind: exchange is &lt;strong&gt;custom-exchange&lt;/strong&gt; | routing key is &lt;strong&gt;test&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;vhost: test ( smae as above )&lt;br/&gt;
+name: : &lt;strong&gt;custom-exchange-queue&lt;/strong&gt; ( whatever you want )&lt;br/&gt;
+bind: exchange is &lt;strong&gt;custom-exchange&lt;/strong&gt; | routing key is &lt;strong&gt;test&lt;/strong&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2&gt;2. Define upstream in downstream broker.&lt;/h2&gt;
 &lt;p&gt;By management web, goto admin -&amp;gt; federation upstreams - add a new upstream
-1. vhost: test
-2. name: &lt;strong&gt;A-2-B&lt;/strong&gt;
-3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost
+1. vhost: test&lt;br/&gt;
+2. name: &lt;strong&gt;A-2-B&lt;/strong&gt;&lt;br/&gt;
+3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost&lt;br/&gt;
 &lt;br/&gt;&lt;br/&gt;&lt;/p&gt;
 &lt;p&gt;By CLI&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rabbitmqctl set_parameter federation-upstream A-2-B &lt;span class="s1"&gt;&amp;#39;{&amp;quot;uri&amp;quot;:&amp;quot;amqp://user:password@ip_of_upstream_broker:port/vhost&amp;quot;}&amp;#39;&lt;/span&gt;
@@ -101,12 +101,12 @@ bind: exchange is &lt;strong&gt;custom-exchange&lt;/strong&gt; | routing key is 
 
 &lt;h2&gt;3. Define policy in downstream broker.&lt;/h2&gt;
 &lt;p&gt;By management web, goto admin -&amp;gt; policies -&amp;gt; add / update a policy.
-1. vhost: test
-2. name: &lt;strong&gt;A-2-B-POLICY&lt;/strong&gt;
-3. pattern: &lt;strong&gt;custom-exchange-queue&lt;/strong&gt;
-4. definition: federation-upstream-set = all&lt;/p&gt;
+1. vhost: test&lt;br/&gt;
+2. name: &lt;strong&gt;A-2-B-POLICY&lt;/strong&gt;&lt;br/&gt;
+3. pattern: &lt;strong&gt;custom-exchange-queue&lt;/strong&gt;&lt;br/&gt;
+4. definition: federation-upstream-set = all&lt;br/&gt;&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;definition parameter에 대한 내용은 더 알아봐야 겠습니다...&lt;/p&gt;
+&lt;p&gt;definition parameter에 대한 내용은 더 알아봐야 겠습니다...&lt;br/&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;By CLI,&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ rabbitmqctl set_policy --apply-to exchanges A-2-B-POLICY &lt;span class="s2"&gt;&amp;quot;custom-exchange-queue&amp;quot;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;federation-upstream-set&amp;quot;:&amp;quot;all&amp;quot;}&amp;#39;&lt;/span&gt;

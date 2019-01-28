@@ -119,23 +119,23 @@ $ rabbitmq-plugins <span class="nb">enable</span> rabbitmq_federation_management
 <h2>1. Define exchange and queue in both( Upstream and Downstream ) broker.</h2>
 <ol>
 <li>create exchange<blockquote>
-<p>vhost: test ( whatever you made )
-name: <strong>custom-exchange</strong> ( whatever you want )
-type: direct ( fanout, topic are also possible. )</p>
+<p>vhost: test ( whatever you made )<br/>
+name: <strong>custom-exchange</strong> ( whatever you want )<br/>
+type: direct ( fanout, topic are also possible. )<br/></p>
 </blockquote>
 </li>
 <li>create queue<blockquote>
-<p>vhost: test ( smae as above )
-name: : <strong>custom-exchange-queue</strong> ( whatever you want )
-bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test</strong></p>
+<p>vhost: test ( smae as above )<br/>
+name: : <strong>custom-exchange-queue</strong> ( whatever you want )<br/>
+bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test</strong><br/></p>
 </blockquote>
 </li>
 </ol>
 <h2>2. Define upstream in downstream broker.</h2>
 <p>By management web, goto admin -&gt; federation upstreams - add a new upstream
-1. vhost: test
-2. name: <strong>A-2-B</strong>
-3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost
+1. vhost: test<br/>
+2. name: <strong>A-2-B</strong><br/>
+3. URI: amqp://user:password@ip_of_upstream_broker:port/vhost<br/>
 <br/><br/></p>
 <p>By CLI</p>
 <div class="highlight"><pre><span></span>rabbitmqctl set_parameter federation-upstream A-2-B <span class="s1">&#39;{&quot;uri&quot;:&quot;amqp://user:password@ip_of_upstream_broker:port/vhost&quot;}&#39;</span>
@@ -144,12 +144,12 @@ bind: exchange is <strong>custom-exchange</strong> | routing key is <strong>test
 
 <h2>3. Define policy in downstream broker.</h2>
 <p>By management web, goto admin -&gt; policies -&gt; add / update a policy.
-1. vhost: test
-2. name: <strong>A-2-B-POLICY</strong>
-3. pattern: <strong>custom-exchange-queue</strong>
-4. definition: federation-upstream-set = all</p>
+1. vhost: test<br/>
+2. name: <strong>A-2-B-POLICY</strong><br/>
+3. pattern: <strong>custom-exchange-queue</strong><br/>
+4. definition: federation-upstream-set = all<br/></p>
 <blockquote>
-<p>definition parameter에 대한 내용은 더 알아봐야 겠습니다...</p>
+<p>definition parameter에 대한 내용은 더 알아봐야 겠습니다...<br/></p>
 </blockquote>
 <p>By CLI,</p>
 <div class="highlight"><pre><span></span>$ rabbitmqctl set_policy --apply-to exchanges A-2-B-POLICY <span class="s2">&quot;custom-exchange-queue&quot;</span> <span class="s1">&#39;{&quot;federation-upstream-set&quot;:&quot;all&quot;}&#39;</span>
