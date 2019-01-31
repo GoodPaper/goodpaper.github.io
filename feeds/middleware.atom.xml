@@ -192,9 +192,11 @@ Federated exchange와는 다르게, 메시지를 이동 숫자(hop)에 대한 �
 &lt;/ol&gt;</content><category term="amqp"></category><category term="rabbitmq"></category></entry><entry><title>RabbitMQ - Federation</title><link href="/rabbitmq-federation.html" rel="alternate"></link><published>2019-01-28T19:00:00+09:00</published><updated>2019-01-28T19:00:00+09:00</updated><author><name>good-paper</name></author><id>tag:None,2019-01-28:/rabbitmq-federation.html</id><summary type="html">&lt;p&gt;RabbitMQ Study - Federation&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;Federation plugin을 통해서, 클러스터링 없이, broker 사이에 메시지를 전달할 수 있다. 몇 개의 유용한 이유를 나열하자면...&lt;/p&gt;
 &lt;h3&gt;1. Loose coupling of nodes or clusters&lt;/h3&gt;
-&lt;p&gt;서로 다른 adminstrative domain을 가진 broker나 cluster 간에 메시지를 공유 할 수 있다.
-- 각자 다른 User와 Virtual host를 가지고 있을 수 있다.
-- 각자 다른 Version의 RabbitMQ와 Erlang을 사용할 수도 있다.&lt;/p&gt;
+&lt;p&gt;서로 다른 adminstrative domain을 가진 broker나 cluster 간에 메시지를 공유 할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;각자 다른 User와 Virtual host를 가지고 있을 수 있다.&lt;/li&gt;
+&lt;li&gt;각자 다른 Version의 RabbitMQ와 Erlang을 사용할 수도 있다.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3&gt;2. WAN Freidliness&lt;/h3&gt;
 &lt;p&gt;AMQP 0.9.1을 사용하는데, 이는 간헐적 접속 장애에 대한 내구성을 지니고 있다.&lt;/p&gt;
 &lt;h3&gt;3. Specifity&lt;/h3&gt;
@@ -205,9 +207,11 @@ Federated exchange와는 다르게, 메시지를 이동 숫자(hop)에 대한 �
 &lt;p&gt;이 플러그인을 통해서 Exchange나 queue를 Federate 할 수 있다. Federated exchange나 queue는 1개 이상의 upstream 에서 메시지를 수신할 수 있다.&lt;br/&gt;
 Upstream으로 연결하려면 RabbitMQ Erlang client를 이용해야 한다.&lt;/p&gt;
 &lt;h1&gt;How is federation set up?&lt;/h1&gt;
-&lt;p&gt;2가지 방법이 있다.
- - Runtime parameter로 설정
- - Federation management plugin으로 설정 ( Management UI의 Federation tap을 추가해 준다. )&lt;/p&gt;
+&lt;p&gt;2가지 방법이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Runtime parameter로 설정&lt;/li&gt;
+&lt;li&gt;Federation management plugin으로 설정 ( Management UI의 Federation tap을 추가해 준다. )&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;1개 이상의 policies를 이용하여 federation을 구성할 수 있다.&lt;/p&gt;
 &lt;h1&gt;Getting started&lt;/h1&gt;
 &lt;p&gt;아래 명령을 입력하여 플러그인을 활성화 한다.&lt;/p&gt;

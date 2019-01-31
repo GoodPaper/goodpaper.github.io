@@ -110,9 +110,11 @@
     <h1>Introduction</h1>
 <p>Federation plugin을 통해서, 클러스터링 없이, broker 사이에 메시지를 전달할 수 있다. 몇 개의 유용한 이유를 나열하자면...</p>
 <h3>1. Loose coupling of nodes or clusters</h3>
-<p>서로 다른 adminstrative domain을 가진 broker나 cluster 간에 메시지를 공유 할 수 있다.
-- 각자 다른 User와 Virtual host를 가지고 있을 수 있다.
-- 각자 다른 Version의 RabbitMQ와 Erlang을 사용할 수도 있다.</p>
+<p>서로 다른 adminstrative domain을 가진 broker나 cluster 간에 메시지를 공유 할 수 있다.</p>
+<ul>
+<li>각자 다른 User와 Virtual host를 가지고 있을 수 있다.</li>
+<li>각자 다른 Version의 RabbitMQ와 Erlang을 사용할 수도 있다.</li>
+</ul>
 <h3>2. WAN Freidliness</h3>
 <p>AMQP 0.9.1을 사용하는데, 이는 간헐적 접속 장애에 대한 내구성을 지니고 있다.</p>
 <h3>3. Specifity</h3>
@@ -123,9 +125,11 @@
 <p>이 플러그인을 통해서 Exchange나 queue를 Federate 할 수 있다. Federated exchange나 queue는 1개 이상의 upstream 에서 메시지를 수신할 수 있다.<br/>
 Upstream으로 연결하려면 RabbitMQ Erlang client를 이용해야 한다.</p>
 <h1>How is federation set up?</h1>
-<p>2가지 방법이 있다.
- - Runtime parameter로 설정
- - Federation management plugin으로 설정 ( Management UI의 Federation tap을 추가해 준다. )</p>
+<p>2가지 방법이 있다.</p>
+<ul>
+<li>Runtime parameter로 설정</li>
+<li>Federation management plugin으로 설정 ( Management UI의 Federation tap을 추가해 준다. )</li>
+</ul>
 <p>1개 이상의 policies를 이용하여 federation을 구성할 수 있다.</p>
 <h1>Getting started</h1>
 <p>아래 명령을 입력하여 플러그인을 활성화 한다.</p>
